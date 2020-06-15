@@ -22,7 +22,8 @@
     "importHelpers": true,
     "allowSyntheticDefaultImports": true,
     "preserveSymlinks": true,
-    "declarationDir": ".types"
+    "declarationDir": ".types",
+    "outDir": "js"
   },
   "include": [
     "src/index.ts"
