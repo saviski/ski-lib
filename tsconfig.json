@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "esnext",
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable",
+      "ESNext.AsyncIterable",
+      "ES2019.Object"
+    ],
+    "moduleResolution": "node",
+    "declaration": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
+    "preserveSymlinks": true,
+    "declarationDir": ".types"
+  },
+  "include": [
+    "src/index.ts"
+  ]
+}

@@ -1,0 +1,6 @@
+/.vscode
+/node_modules
+/pnpm-lock.yaml
+/ski-lib-1.0.0.tgz
+/ski-lib.js
+/ski-lib.js.map
