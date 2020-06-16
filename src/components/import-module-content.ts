@@ -1,8 +1,3 @@
-import 'es-module-shims';
-
-declare global {
-  const importShim: <T = any>(path: string) => Promise<T>;
-}
 
 const IMPORT_REGEXP = /import\s+?(?:(?:(?:[\w*\s{},]*)\s+from\s+?)|)(?:(?:"(?:.*?)")|(?:'(?:.*?)'))[\s]*?(?:;|$|)/g;
 
@@ -18,7 +13,7 @@ export async function importModuleContent(content: string, basepath?: URL) {
   let blob = new Blob([content], { type: 'text/javascript' });
   let dynamic_url = URL.createObjectURL(blob) + '#';
   try {
-    return await importShim(dynamic_url);
+    return await import(dynamic_url);
   } finally {
     URL.revokeObjectURL(dynamic_url);
   }
