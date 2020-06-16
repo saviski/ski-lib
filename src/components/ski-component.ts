@@ -69,6 +69,7 @@ function createComponent(name: string, content: DocumentFragment,
 
     connectedCallback() {
       this.ski = new SkiAll(this.shadowRoot!, this.skidata)
+      this.ski.init()
     }
 
     disconnectedCallback() {

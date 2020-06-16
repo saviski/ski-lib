@@ -1,6 +1,6 @@
 {
   "name": "ski-lib",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Write web components in HTML and async generator properties",
   "module": "js/index.js",
   "main": "ski-lib.min.js",
