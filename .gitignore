@@ -3,6 +3,7 @@
 /pnpm-lock.yaml
 /ski-lib-1.0.0.tgz
 /ski-lib.js
-/ski-lib.js.map
+/ski-lib.min.js
+/ski-lib.min.js.map
 /.types
 /js
