@@ -10,16 +10,18 @@ export function skiInit(root: Node, data: Readonly<object> = {}) {
 }
 
 export { Rule } from './core/ski-rule'
-export * from './template/ski-association'
-export * from './template/ski-class'
-export * from './template/ski-val'
-export * from './template/ski-if'
-export * from './template/ski-let'
-export * from './template/ski-unless'
-export * from './template/ski-repeat'
-export * from './template/ski-switch'
-export * from './template/ski-event-trigger'
-export * from './template/ski-template-string'
-export * from './template/ski-name'
-export * from './template/ski-inline-expression'
+export { default as SkiAssociation } from './template/ski-association'
+export { default as SkiClass } from './template/ski-class'
+export { default as SkiVal } from './template/ski-val'
+export { default as SkiIf } from './template/ski-if'
+export { default as SkiLet } from './template/ski-let'
+export { default as SkiUnless } from './template/ski-unless'
+export { default as SkiRepeat } from './template/ski-repeat'
+export { default as SkiSwitch } from './template/ski-switch'
+export { default as SkiEventTrigger } from './template/ski-event-trigger'
+export { default as SkiName } from './template/ski-name'
+export { default as SkiTemplateString } from './template/ski-template-string'
+export { default as SkiInlineExpression } from './template/ski-inline-expression'
 export { initSkiComponent } from './components/ski-component';
+export { ExtendedAsyncGenerator } from './generators/extended-async-generator';
+

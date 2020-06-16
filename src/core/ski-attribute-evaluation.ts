@@ -31,7 +31,7 @@ export default abstract class SkiAttributeEvaluation<T = Record<string, any>> ex
 
   protected prepare(_element: Element, _attr: Attr): T {
     return <T> {}
-  };
+  }
 
   protected abstract apply(element: Element, target: string, data: any, attr: TypedSkiData<T>);
   

@@ -2,23 +2,25 @@ import typescript from 'rollup-plugin-typescript2';
 import { terser } from "rollup-plugin-terser";
 import pkg from './package.json';
 
-export default [
-  {
-    input: 'src/index.ts',
-    output: [{
+export default {
+  input: 'src/index.ts',
+  output: [{
+      file: pkg.main
+    }, { 
       file: pkg.module,
-      sourcemap: true
-    }],
-    external: Array.from(Object.keys(pkg.dependencies || {})),
-    plugins: [
-      typescript({
-        useTsconfigDeclarationDir: true
-      }),
-      terser({
-        output: {
-          comments: false
-        }
-      })
-    ]
-  }
-]
+      pugins: [
+        terser({
+          output: {
+            comments: false
+          }
+        })
+      ]
+    }
+  ],
+  external: Array.from(Object.keys(pkg.dependencies || {})),
+  plugins: [
+    typescript({
+      useTsconfigDeclarationDir: true
+    })
+  ]
+}

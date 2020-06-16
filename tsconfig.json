@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2018",
     "module": "esnext",
     "lib": [
       "ES2020",
@@ -28,5 +28,8 @@
   },
   "include": [
     "src/index.ts"
+  ],
+  "exclude": [
+    "./types/**"
   ]
 }

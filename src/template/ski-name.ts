@@ -1,6 +1,5 @@
 import { Rule } from '../core/ski-rule';
 import SkiAttributeObserver from '../core/ski-attribute-observer';
-import SkiNodeObserver from '../core/ski-node-observer';
 import '../core/ski-data';
 
 export default class SkiName extends SkiAttributeObserver {

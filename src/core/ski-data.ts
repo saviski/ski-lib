@@ -1,4 +1,4 @@
-const dataStore = window['dataStore'] = new WeakMap<Node, object>();
+const dataStore = new WeakMap<Node, object>();
 
 !('skidata' in Node.prototype) &&
 Object.defineProperty(Node.prototype, 'skidata', {
