@@ -24,7 +24,21 @@
     "allowSyntheticDefaultImports": true,
     "preserveSymlinks": true,
     "declarationDir": ".types",
-    "outDir": "js"
+    "outDir": "js",
+    "plugins": [
+      {
+        "transform": "ts-transform-import-path-rewrite",
+        "import": "transform",
+        "after": true,
+        "type": "config",
+        "alias": {
+          "^([./].+)(?<!\\.(js|css|wasm|json))$": "$1.js",
+          "^(?=/webmodules/)?(.*)(?<!\\.(js|css|wasm|json))$": "/webmodules/$1.js",
+          "^/webmodules/(.*)$": "/webmodules/$1",
+          "^(.*)$": "/webmodules/$1"
+        }
+      }
+    ]
   },
   "include": [
     "src/index.ts"
