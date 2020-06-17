@@ -9,9 +9,12 @@ class SkiComponent extends HTMLElement {
 
   constructor() {
     super();
-    this.content = document.createDocumentFragment();
-    this.content.append(...this.childNodes);
-
+    if (this.firstElementChild instanceof HTMLTemplateElement)
+      this.content = this.firstElementChild.content;
+    else {
+      this.content = document.createDocumentFragment();
+      this.content.append(...this.childNodes);
+    }
     const name = this.getAttribute('name')!;
     const extendsComponent = this.getAttribute('extends');
     this.createComponent(name, extendsComponent);
