@@ -41,7 +41,7 @@ export {
   EventMap,
   ExtendedAsyncGenerator,
   initSkiComponent,
-  mix, 
+  mix,
   mixwith,
   observables,
   Rule,

@@ -1,54 +1,49 @@
-import { Rule } from './ski-rule';
-import SkiAttributeEvaluation from './ski-attribute-evaluation';
-import './ski-data';
+import { Rule } from './ski-rule'
+import SkiAttributeEvaluation from './ski-attribute-evaluation'
+import './ski-data'
 
 export default abstract class SkiPropertyObserver<T> extends SkiAttributeEvaluation<T> {
-
-  static subtree = true;
-  static attributes = true;
-  static childList = false;
-  attributeFilter = [this.attr];
+  static subtree = true
+  static attributes = true
+  static childList = false
+  attributeFilter = [this.attr]
 
   constructor(root: Node, private attr: string) {
-    super(root, attr, Rule.EQUALS);
-    this.defineProperty();
+    super(root, attr, Rule.EQUALS)
+    this.defineProperty()
   }
 
   protected apply(element: Element, attr: string, value: any) {
-    this.set(element, value, element.attributes[attr].skidata);
+    this.set(element, value, element.attributes[attr].skidata)
   }
 
   // protected onChange(record: MutationRecord) {
   //   record.target instanceof Element &&
   //     record.attributeName! in record.target.attributes &&
-  //       !attr.processed && 
+  //       !attr.processed &&
   //         this.update(record.target.attributes[record.attributeName!], record.attributeName!);
   // }
 
   protected setAttribute(element: Element, value: any) {
-    const isPrimitive = value => value !== Object(value);
-    if (value === undefined || value === null || !isPrimitive(value)) 
-      element.removeAttribute(value);
-    else if (value.toString() != element.getAttribute(this.attr))
-      element.setAttribute(this.attr, value); // this will trigger onChange again
+    const isPrimitive = value => value !== Object(value)
+    if (value === undefined || value === null || !isPrimitive(value)) element.removeAttribute(value)
+    else if (value.toString() != element.getAttribute(this.attr)) element.setAttribute(this.attr, value) // this will trigger onChange again
   }
 
-  protected abstract set(element: Element, value: any, skidata: T): void;
+  protected abstract set(element: Element, value: any, skidata: T): void
 
   private defineProperty() {
-    const set = this.set.bind(this);
-    const attr = this.attr;
-    
+    const set = this.set.bind(this)
+    const attr = this.attr
+
     attr in Element.prototype ||
-    Object.defineProperty(Element.prototype, this.attr, {
+      Object.defineProperty(Element.prototype, this.attr, {
+        set(this: Element, value: any) {
+          set(this, value, this.attributes[attr].skidata)
+        },
 
-      set(this: Element, value: any) {
-        set(this, value, this.attributes[attr].skidata);
-      },
-
-      enumerable: false,
-      configurable: false
-    });
+        enumerable: false,
+        configurable: false,
+      })
   }
-
 }

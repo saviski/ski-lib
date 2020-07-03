@@ -1,10 +1,15 @@
-const blob = new Blob([`
+const blob = new Blob(
+  [
+    `
 
 self.addEventListener('fetch', (event) => {
   console.log('fetch', event)
 })
 
-`], { type: 'application/javascript' })
+`,
+  ],
+  { type: 'application/javascript' }
+)
 
 const url = URL.createObjectURL(blob)
 
