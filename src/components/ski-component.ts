@@ -1,91 +1,66 @@
-import { importModuleContent } from './import-module-content'
-import SkiProperty from '../core/ski-property'
-import SkiAll from '../ski-all';
+import SkiAll from '../ski-all'
+import { mix, MixinWith } from '../extras/mix'
 
-class SkiComponent extends HTMLElement {
+const camelCase = (name: string) => 
+  name.replace(/-([a-z])/g, g => g[1].toUpperCase())
 
-  private content: DocumentFragment;
-  private basepath = new URL(location.origin);
+const dashCase = (name: string) => 
+  name.replace(/([A-Z])/g, '-$1').toLowerCase()
+export default class SkiComponent extends HTMLElement {
 
-  constructor() {
-    super();
-    if (this.firstElementChild instanceof HTMLTemplateElement)
-      this.content = this.firstElementChild.content;
-    else {
-      this.content = document.createDocumentFragment();
-      this.content.append(...this.childNodes);
-    }
-    const name = this.getAttribute('name')!;
-    const extendsComponent = this.getAttribute('extends');
-    this.createComponent(name, extendsComponent);
-  }
+  static content = document.createDocumentFragment()
 
-  async createComponent(name: string, extendsComponent?: string | null) {
+  static is: string
 
-    const baseComponent: typeof HTMLElement = extendsComponent ? (
-      await customElements.whenDefined(extendsComponent), 
-        await customElements.get(extendsComponent)) : 
-          HTMLElement;
+  static baseURI: string = document.baseURI
 
-    const modules: { default?: any } = await Array.from(
-      this.content.querySelectorAll<HTMLScriptElement>('script[type=module]'))
-        .map(module => module.src ?
-          import(new URL(module.src, this.basepath).href) : 
-            importModuleContent(module.innerHTML, this.basepath))
-              .reduce(async (modules, module) => Object.assign(await modules, await module), 
-                Promise.resolve({}));
+  private ski?: SkiAll
 
-    createComponent(name, this.content, baseComponent, modules.default);
+  // protected attr: Record<string, SkiProperty> = {}
+
+  constructor(..._args) {
+    super()
+    const root = this.attachShadow({ mode: 'open' })
+    root.append(new.target.content.cloneNode(true))
+    Object.assign(root.skidata, { baseURI: new.target.baseURI })
   }
   
-}
-
-export function initSkiComponent(name = 'ski-component') {
-  window.customElements.get(name) || customElements.define(name, SkiComponent);
-}
-
-function createComponent(name: string, content: DocumentFragment,
-  baseComponent: typeof HTMLElement, objectClass?: typeof Object & { properties: object }) {
-    
-  const attributes = Object.keys(objectClass?.properties ?? {});
-
-  const component = class extends baseComponent {
-
-    properties: Record<string, SkiProperty>
-    ski?: SkiAll
-
-    constructor() {
-      super()
-      const shadowRoot = this.attachShadow({ mode: 'open' })
-      shadowRoot.append(content.cloneNode(true))
-      Object.assign(shadowRoot.skidata, this.properties = this.buildProperties())
-    }
-
-    private buildProperties() {
-      let object = objectClass ? new objectClass(this) : {}
-      let properties = Object.fromEntries(
-        attributes.map(
-          name => [name, SkiProperty.wrap(this, name)]))
-      Object.defineProperties(object, properties)
-      return properties
-    }
-
-    connectedCallback() {
-      this.ski = new SkiAll(this.shadowRoot!, this.skidata)
-      this.ski.init()
-    }
-
-    disconnectedCallback() {
-      this.ski?.disconnect()
-    }
-
-    static observedAttributes = attributes
-
-    attributeChangedCallback(name, _oldValue, newValue) {
-      this.properties[name].set(newValue)
-    }
-
+  init(_component: Node) {}
+  
+  connectedCallback() {
+    Object.assign(this.shadowRoot!.skidata, this)
+    this.ski = new SkiAll(this.shadowRoot!)
+    this.ski.init()
+    this.init(this.shadowRoot!)
   }
 
-  customElements.define(name, component);
+  disconnectedCallback() {
+    this.ski?.disconnect()
+  }
+
+  static with: MixinWith<typeof SkiComponent>['with'] = mix(SkiComponent).with
+
+
+  // static with_<A extends object>(mixin: A, baseclass: typeof SkiComponent = SkiComponent): Mixin<SkiComponent, A> {
+  //   let attributes = Object.assign(<any> {}, baseclass.attributes, mixin)
+  //   return <any> class extends baseclass {
+  
+  //     static attributes = attributes
+  
+  //     static observedAttributes = Object.keys(attributes).map(dashCase)
+  
+  //     constructor() {
+  //       super()
+  //       for (const [name, value] of Object.entries(attributes)) {
+  //         this.attr[name] = SkiProperty.wrap(this, name, this[name] || value)
+  //         this.attr[name].watch(newvalue => this.setAttribute(name, newvalue.toString()))
+  //       }
+  //     }
+  
+  //     attributeChangedCallback(name: string, oldValue: any, newValue: any) {
+  //       oldValue != newValue && this.attr[camelCase(name)].set(newValue)
+  //     }
+  
+  //   }
+  // }
 }

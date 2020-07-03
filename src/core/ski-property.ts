@@ -33,7 +33,7 @@ export default class SkiProperty<T = any> implements TypedPropertyDescriptor<T> 
     return <T> this.currentValue;
   }
 
-  get = () => this.currentValue != uninitialized ? this.currentValue : undefined!;
+  get = () => this.currentValue !== uninitialized ? this.currentValue : undefined!;
 
   set = (value: T) => {
     if (value !== this.currentValue) {
@@ -43,20 +43,25 @@ export default class SkiProperty<T = any> implements TypedPropertyDescriptor<T> 
     return this;
   }
 
+  async watch(callback: (value: T) => void) {
+    for await (const value of this) callback(value);
+  }
+
   enumerable = true
 
   configurable = true
 
   private static map = new WeakMap<PropertyDescriptor, SkiProperty>();
   
-  static wrap(object: object, name: PropertyKey) {
+  static wrap(object: object, name: PropertyKey, value = object[name]) {
     let descriptor = Object.getOwnPropertyDescriptor(object, name);
     let property = descriptor && SkiProperty.map.get(descriptor);
     if (!property) {
-      property = new SkiProperty(object[name]);
+      property = new SkiProperty(value);
       Object.defineProperty(object, name, property);
-      descriptor = Object.getOwnPropertyDescriptor(object, name)!;
-      SkiProperty.map.set(descriptor, property);
+      let newdescriptor = Object.getOwnPropertyDescriptor(object, name)!;
+      SkiProperty.map.set(newdescriptor, property);
+      newdescriptor.set && property.watch(v => newdescriptor.set!(v))
     }
     return property;
   }

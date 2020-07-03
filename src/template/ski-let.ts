@@ -16,6 +16,7 @@ export default class SkiLet extends SkiAttributeObserver {
       const result = new SkiDependencyEval(attr.value, element, element.skidata).run();
       this.apply(element, target, result);
       attr.processed = true;
+      // attr.ownerElement!.removeAttributeNode(attr)
     }
   }
 

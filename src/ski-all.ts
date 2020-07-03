@@ -12,16 +12,18 @@ import SkiTemplateString from './template/ski-template-string'
 import SkiName from './template/ski-name'
 import SkiInlineExpression from './template/ski-inline-expression'
 import SkiNodeObserver from './core/ski-node-observer';
+import SkiConditionalAttribute from './template/ski-conditional-attribute';
+import SkiRelativeUri from './template/ski-relative-uri';
 
 import './core/ski-data'
-import './generators/index'
+import './generators/extensions'
 import './generators/events/dom-events'
 
 export default class SkiAll {
   
   private all: SkiNodeObserver[];
 
-  constructor(root: Node, data: Readonly<object> = {}) {
+  constructor(root: Node, data?: Readonly<object>) {
     this.all = [
       new SkiName(root, '#', Rule.PREFIX),
       new SkiLet(root, data, 'let-', Rule.PREFIX),
@@ -32,6 +34,8 @@ export default class SkiAll {
       new SkiUnless(root, 'unless', 'else'),
       new SkiSwitch(root, 'switch', 'case', 'default'),
       new SkiVal(root, 'val'),
+      new SkiConditionalAttribute(root, '?', Rule.SUFFIX),
+      new SkiRelativeUri(root, 'relative-', Rule.PREFIX),
       // new SkiTemplateString(root, '`', Rule.SURROUNDING),
       // new SkiInlineExpression(root, '{{', '}}'),
       new SkiEventTrigger(root, '|')

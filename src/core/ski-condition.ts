@@ -1,10 +1,10 @@
 import SkiPropertyObserver from './ski-property-observer';
 
-interface CondictionData {
+interface ConditionData {
   placeholder: ChildNode
 }
 
-export default abstract class SkiCondiction extends SkiPropertyObserver<CondictionData> {
+export default abstract class SkiCondiction extends SkiPropertyObserver<ConditionData> {
 
   constructor(root: Node, attr: string, private fallback?: string) {
     super(root, attr);
@@ -20,7 +20,7 @@ export default abstract class SkiCondiction extends SkiPropertyObserver<Condicti
     }
   }
 
-  protected set(element: Element, value: string | null, { placeholder }: CondictionData) {
+  protected set(element: Element, value: string | null, { placeholder }: ConditionData) {
     if (this.checkCondiction(value, element))
       placeholder.parentNode && placeholder.replaceWith(element);
     else

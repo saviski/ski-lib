@@ -7,7 +7,9 @@
       "DOM",
       "DOM.Iterable",
       "ESNext.AsyncIterable",
-      "ES2019.Object"
+      "ES2019.Object",
+      "WebWorker",
+      "WebWorker.ImportScripts"
     ],
     "moduleResolution": "node",
     "declaration": true,
@@ -32,10 +34,7 @@
         "after": true,
         "type": "config",
         "alias": {
-          "^([./].+)(?<!\\.(js|css|wasm|json))$": "$1.js",
-          "^(?=/webmodules/)?(.*)(?<!\\.(js|css|wasm|json))$": "/webmodules/$1.js",
-          "^/webmodules/(.*)$": "/webmodules/$1",
-          "^(.*)$": "/webmodules/$1"
+          "^([./].+)(?<!\\.(js|css|wasm|json))$": "$1.js"
         }
       }
     ]

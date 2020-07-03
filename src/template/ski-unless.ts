@@ -1,4 +1,4 @@
-import SkiCondiction from '../core/ski-condiction';
+import SkiCondiction from '../core/ski-condition';
 
 export default class SkiUnless extends SkiCondiction {
 

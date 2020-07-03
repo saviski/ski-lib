@@ -34,13 +34,14 @@ export default class SkiClass extends SkiAttributeEvaluation {
     super(root, name, rule);
   }
 
-  protected apply(element: Element, target: string, enable: any) {
-    let classes = target.split('.');
+  protected apply(element: Element, target: string, enable: any, attr: Attr) {
+    const classes = target.split('.');
+    const toggle = enable || ((enable === undefined) && Boolean(attr.value))
     for (let name of classes)
-      this.toggleClass(element, name, enable);
+      this.toggleClass(element, name, toggle);
   }
 
   private toggleClass(element: Element, name: string, enable: boolean) {
-    element.classList.toggle(name, enable || enable === undefined);
+    element.classList.toggle(name, enable);
   }
 }

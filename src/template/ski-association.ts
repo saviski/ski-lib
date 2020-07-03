@@ -8,9 +8,13 @@ export default class SkiAssociation extends SkiAttributeEvaluation {
   }
 
   protected apply(element: Element, target: string, data: any) {
-    let chain = target.split('.').map(this.camelCase);
-    let property = chain.pop()!;
-    chain.reduce((data, name) => data[name], element)[property] = data;
+    if (target.includes('.') || typeof data == 'object' || typeof data == 'function') {
+      let chain = target.split('.').map(this.camelCase);
+      let property = chain.pop()!;
+      chain.reduce((data, name) => data[name], element)[property] = data;
+    } else {
+      element.setAttribute(target, data);
+    }
   }
   
 }

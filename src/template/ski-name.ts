@@ -13,6 +13,7 @@ export default class SkiName extends SkiAttributeObserver {
     if (!attr.processed) {
       this.root.skidata[target] = attr.ownerElement!;//.events;
       attr.processed = true;
+      // attr.ownerElement!.removeAttributeNode(attr)
     }
   }
 

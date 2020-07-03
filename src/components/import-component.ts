@@ -1,25 +1,41 @@
-import './request-document';
+import './request-document'
 
-const imports = new Set<string>();
+const imports = new Set<string>()
 
-export const importComponent = async (path: string, _overrideTagName?: string): Promise<any> => {
-  let children: Element[] = [];
+var importBasePath = new URL(location.origin)
+
+export const importComponent = async (path: string, rel: string, parent = document.head): Promise<any> => {
+  let base = document.createElement('base');
   try {
-    const basepath = new URL(path, location.origin);
-    if (!imports.has(basepath.href)) {
-      const content = await (await fetch(basepath.href)).document();
-      children = Array.from(content.children);
-      document.body.append(content);
-      imports.add(basepath.href);
+    importBasePath = new URL(path, location.origin)
+    base.href = importBasePath.href
+    document.head.prepend(base)
+    if (!imports.has(importBasePath.href)) {
+      const content = await (await fetch(importBasePath.href)).document()
+      importAllComponents(content, rel, importBasePath)
+      preloadStylesheets(content, importBasePath)
+      parent.append(content)
+      imports.add(importBasePath.href)
+      Object.defineProperty(parent, 'baseURI', { value:  base.href })
     }
   } catch(e) {
-    throw new Error(`${ e }\n\tat importComponent('${ path }')`);
+    throw new Error(`${ e }\n\tat importComponent('${ path }')`)
   } finally {
-    children.forEach(document.body.removeChild, document.body);
+    document.head.removeChild(base)
   }
 }
 
-addEventListener('load', () => {
-  for (let link of document.querySelectorAll<HTMLLinkElement>('link[rel=component]'))
-    importComponent(new URL(link.href).href, link.getAttribute('as')!);
-})
+export function importAllComponents(element: ParentNode, rel: string, basepath?: URL) {
+  for (let link of element.querySelectorAll<HTMLLinkElement>(`link[rel=${ rel }]`))
+    importComponent(new URL(link.href, basepath).href, link.getAttribute('as')!, link)
+}
+
+function preloadStylesheets(element: ParentNode, basepath: URL) {
+  for (const link of element.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]')) {
+    const preload = <HTMLLinkElement> link.cloneNode()
+    preload.rel = 'preload'
+    preload.as = 'style'
+    preload.href = new URL(link.href, basepath).href
+    document.head.append(preload)
+  }
+}

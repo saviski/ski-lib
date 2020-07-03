@@ -27,16 +27,19 @@ export default abstract class SkiAttributeObserver extends SkiNodeObserver {
     return name.replace(this.matches, '');
   }
 
-  protected * findNodes(node: Node) {
-    if (node instanceof DocumentFragment)
-      return node.childNodes.forEach(this.findNodes, this);
+  private * findNodes(node: Node): Iterable<Attr> {
+
+    if (node instanceof DocumentFragment) {
+      for (let child of node.children)
+        yield* this.findNodes(child);
+      return;
+    }
       
     let attributes = this.xPathExpression.evaluate(node, this.evaluationType);
 
     if (this.evaluationSnapshot)
       for (let i = 0, attr: Attr; attr = attributes.snapshotItem(i) as Attr; i++)
         yield attr;
-
     else
       for (let attr: Attr; attr = attributes.iterateNext() as Attr;)
         yield attr;
@@ -56,9 +59,10 @@ export default abstract class SkiAttributeObserver extends SkiNodeObserver {
     record.addedNodes?.forEach(this.updateTree, this);
     record.removedNodes?.forEach(this.detachTree, this);
     record.attributeName && 
-      this.matches.test(record.attributeName) &&
-        record.target instanceof Element &&
-          this.update(record.target.attributes[record.attributeName], this.attrName(record.attributeName));
+    this.matches.test(record.attributeName) &&
+      record.target instanceof Element &&
+        record.attributeName in record.target.attributes &&
+            this.update(record.target.attributes[record.attributeName], this.attrName(record.attributeName));
   }
 
   protected camelCase = (name: string) => name.replace(/-([a-z])/g, g => g[1].toUpperCase());

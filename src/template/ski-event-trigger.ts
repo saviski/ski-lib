@@ -27,6 +27,7 @@ export default class SkiEventTrigger extends SkiAttributeObserver {
         evaluator.run().next().then(({value}) => emitter(value));
       });
       attr.processed = true;
+      // attr.ownerElement!.removeAttributeNode(attr)
     }
   }
 

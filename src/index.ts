@@ -1,27 +1,63 @@
+import { importAllComponents } from './components/import-component'
+import SkiComponent from './components/ski-component'
+import { initSkiComponent } from './components/ski-template-component'
 import './core/ski-data'
-import './generators/index'
+import { Rule } from './core/ski-rule'
+import attributes from './extras/attributes'
+import { initBaseUrl } from './extras/base-url'
+import elements from './extras/elements'
+import { mix, mixwith } from './extras/mix'
+import observables from './extras/observables'
+import { tokenList } from './extras/token-list'
 import './generators/events/dom-events'
-import SkiAll from './ski-all';
-import { initSkiComponent } from './components/ski-component';
+import EventGenerator, { EventMap } from './generators/events/dom-events'
+import { ExtendedAsyncGenerator } from './generators/extended-async-generator'
+import './generators/extensions'
+import SkiAll from './ski-all'
+import SkiAssociation from './template/ski-association'
+import SkiClass from './template/ski-class'
+import SkiEventTrigger from './template/ski-event-trigger'
+import SkiIf from './template/ski-if'
+import SkiInlineExpression from './template/ski-inline-expression'
+import SkiLet from './template/ski-let'
+import SkiName from './template/ski-name'
+import SkiRepeat from './template/ski-repeat'
+import SkiSwitch from './template/ski-switch'
+import SkiTemplateString from './template/ski-template-string'
+import SkiUnless from './template/ski-unless'
+import SkiVal from './template/ski-val'
 
-export function skiInit(root: Node, data: Readonly<object> = {}) {
+function skiInit(root: Node, data: Readonly<object> = {}) {
   initSkiComponent('ski-component')
-  return new SkiAll(root, data).init();
+  importAllComponents(document.head, 'ski-component')
+  initBaseUrl()
+  return new SkiAll(root, data).init()
 }
 
-export { Rule } from './core/ski-rule'
-export { default as SkiAssociation } from './template/ski-association'
-export { default as SkiClass } from './template/ski-class'
-export { default as SkiVal } from './template/ski-val'
-export { default as SkiIf } from './template/ski-if'
-export { default as SkiLet } from './template/ski-let'
-export { default as SkiUnless } from './template/ski-unless'
-export { default as SkiRepeat } from './template/ski-repeat'
-export { default as SkiSwitch } from './template/ski-switch'
-export { default as SkiEventTrigger } from './template/ski-event-trigger'
-export { default as SkiName } from './template/ski-name'
-export { default as SkiTemplateString } from './template/ski-template-string'
-export { default as SkiInlineExpression } from './template/ski-inline-expression'
-export { initSkiComponent } from './components/ski-component';
-export { ExtendedAsyncGenerator } from './generators/extended-async-generator';
-
+export {
+  attributes,
+  elements,
+  EventGenerator,
+  EventMap,
+  ExtendedAsyncGenerator,
+  initSkiComponent,
+  mix, 
+  mixwith,
+  observables,
+  Rule,
+  SkiAssociation,
+  SkiClass,
+  SkiComponent,
+  SkiEventTrigger,
+  SkiIf,
+  skiInit,
+  SkiInlineExpression,
+  SkiLet,
+  SkiName,
+  SkiRepeat,
+  SkiSwitch,
+  SkiTemplateString,
+  SkiUnless,
+  SkiVal,
+  tokenList,
+}

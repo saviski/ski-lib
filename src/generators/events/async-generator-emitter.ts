@@ -2,7 +2,7 @@ import { ExtendedAsyncGenerator } from '../extended-async-generator';
 
 type Emit<T> = (value: T) => void;
 
-export default interface AsyncGeneratorEmitter<T> extends Emit<any> {}
+export default interface AsyncGeneratorEmitter<T> extends Emit<T> {}
 
 export default class AsyncGeneratorEmitter<T> extends ExtendedAsyncGenerator<T> {
 

@@ -10,6 +10,7 @@ export default abstract class SkiAttributeEvaluation<T = Record<string, any>> ex
       Object.assign(attr.skidata, this.prepare(element, attr));
       this.evaluate(element, attr, target, attr.value);
       attr.processed = true;
+      // attr.ownerElement!.removeAttributeNode(attr)
     }
   }
 
@@ -22,7 +23,7 @@ export default abstract class SkiAttributeEvaluation<T = Record<string, any>> ex
     attr.skidata.result = result;
 
     for await (let data of result)
-      this.apply(element, propertyChain, data, <TypedSkiData<T>> attr);
+      this.apply(element, propertyChain, data, attr);
   }
 
   protected attrSkiData(element: Element, name: string): T {
@@ -33,6 +34,6 @@ export default abstract class SkiAttributeEvaluation<T = Record<string, any>> ex
     return <T> {}
   }
 
-  protected abstract apply(element: Element, target: string, data: any, attr: TypedSkiData<T>);
+  protected abstract apply(element: Element, target: string, data: any, attr: Attr & TypedSkiData<T>);
   
 }
