@@ -4,10 +4,10 @@ import { until } from '../operators/until'
 
 declare module '../extended-async-generator' {
   interface ExtendedAsyncGenerator<T> {
-    until(next: Promise<any>): ExtendedAsyncGenerator<T>
+    until(...events: Array<AsyncGenerator<any> | Promise<any>>): ExtendedAsyncGenerator<T>
   }
 }
 
-ExtendedAsyncGenerator.prototype.until = function (next) {
-  return from(until(this, next))
+ExtendedAsyncGenerator.prototype.until = function (...events) {
+  return from(until(this, ...events))
 }

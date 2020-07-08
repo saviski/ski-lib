@@ -14,10 +14,12 @@ import SkiInlineExpression from './template/ski-inline-expression'
 import SkiNodeObserver from './core/ski-node-observer'
 import SkiConditionalAttribute from './template/ski-conditional-attribute'
 import SkiRelativeUri from './template/ski-relative-uri'
+import SkiStyle from './template/ski-style'
 
 import './core/ski-data'
 import './generators/extensions'
 import './generators/events/dom-events'
+import SkiCSSProperty from './template/ski-css-properties'
 
 export default class SkiAll {
   private all: SkiNodeObserver[]
@@ -28,6 +30,8 @@ export default class SkiAll {
       new SkiLet(root, data, 'let-', Rule.PREFIX),
       new SkiRepeat(root, 'for', 'of'),
       new SkiAssociation(root, ':', Rule.SUFFIX),
+      new SkiStyle(root, 'style.', Rule.PREFIX),
+      new SkiCSSProperty(root, '--', Rule.PREFIX),
       new SkiClass(root, '.', Rule.PREFIX),
       new SkiIf(root, 'if', 'else'),
       new SkiUnless(root, 'unless', 'else'),

@@ -26,6 +26,9 @@ import SkiSwitch from './template/ski-switch'
 import SkiTemplateString from './template/ski-template-string'
 import SkiUnless from './template/ski-unless'
 import SkiVal from './template/ski-val'
+import cssProperties from './extras/css-properties'
+import SkiStyle from './template/ski-style'
+import SkiCSSProperty from './template/ski-css-properties'
 
 function skiInit(root: Node, data: Readonly<object> = {}) {
   initSkiComponent('ski-component')
@@ -36,6 +39,7 @@ function skiInit(root: Node, data: Readonly<object> = {}) {
 
 export {
   attributes,
+  cssProperties,
   elements,
   EventGenerator,
   EventMap,
@@ -48,6 +52,7 @@ export {
   SkiAssociation,
   SkiClass,
   SkiComponent,
+  SkiCSSProperty,
   SkiEventTrigger,
   SkiIf,
   skiInit,
@@ -55,6 +60,7 @@ export {
   SkiLet,
   SkiName,
   SkiRepeat,
+  SkiStyle,
   SkiSwitch,
   SkiTemplateString,
   SkiUnless,

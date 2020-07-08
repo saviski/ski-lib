@@ -4,6 +4,7 @@ import { trigger } from '../operators/trigger'
 
 declare module '../extended-async-generator' {
   interface ExtendedAsyncGenerator<T> {
+    trigger<R>(target: AsyncGenerator<R>): ExtendedAsyncGenerator<R>
     trigger<R>(factory: (v: T) => AsyncGenerator<R>): ExtendedAsyncGenerator<R>
   }
 }

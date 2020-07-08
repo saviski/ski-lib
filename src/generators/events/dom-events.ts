@@ -12,7 +12,9 @@ export interface EventGeneratorOptions {
 
 type AddEventListener = Pick<HTMLElement, 'addEventListener' | 'removeEventListener' | 'dispatchEvent'>
 
-export default class EventGenerator<T extends Event = CustomEvent> extends AsyncGeneratorEmitter<T extends CustomEvent<infer U> ? U : T> {
+export default class EventGenerator<T extends Event = CustomEvent> extends AsyncGeneratorEmitter<
+  T extends CustomEvent<infer U> ? U : T
+> {
   constructor(private element: AddEventListener, private type: string, private options: EventGeneratorOptions = {}) {
     super()
     element.addEventListener(type, this.handler)
@@ -54,7 +56,9 @@ export default class EventGenerator<T extends Event = CustomEvent> extends Async
 
   emit(value: T extends CustomEvent<infer U> ? U : T) {
     this.element.dispatchEvent(
-      value instanceof Event ? new (<typeof Event>value.constructor)(this.type, value) : new CustomEvent<any>(this.type, { detail: value })
+      value instanceof Event
+        ? new (<typeof Event>value.constructor)(this.type, value)
+        : new CustomEvent<any>(this.type, { detail: value })
     )
   }
 
@@ -87,7 +91,8 @@ export function events(context: AddEventListener | Document | Window): EventMap 
   return (
     context[events$] ??
     (context[events$] = lazyProxy(property => {
-      if (property != property.toString().toLowerCase()) console.warn(`Consider using only lowercase letters for event ${property.toString()} name`)
+      if (property != property.toString().toLowerCase())
+        console.warn(`Consider using only lowercase letters for event ${property.toString()} name`)
       return new EventGenerator(context, property)
     }))
   )

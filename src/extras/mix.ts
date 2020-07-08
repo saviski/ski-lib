@@ -16,6 +16,14 @@ export function mixwith<T, U>(superclass: T, mixin: Mixin<U>): Mix<T, U>
 export function mixwith<T, U, V>(superclass: T, a: Mixin<U>, b: Mixin<V>): Mix<Mix<T, U>, V>
 export function mixwith<T, U, V, W>(superclass: T, a: Mixin<U>, b: Mixin<V>, c: Mixin<W>): Mix<Mix<Mix<T, U>, V>, W>
 export function mixwith<T, U, V, W, X>(superclass: T, a: Mixin<U>, b: Mixin<V>, c: Mixin<W>, d: Mixin<X>): Mix<Mix<Mix<Mix<T, U>, V>, W>, X>
+export function mixwith<T, U, V, W, X, Y>(
+  superclass: T,
+  a: Mixin<U>,
+  b: Mixin<V>,
+  c: Mixin<W>,
+  d: Mixin<X>,
+  e: Mixin<Y>
+): Mix<Mix<Mix<Mix<Mix<T, U>, V>, W>, X>, Y>
 export function mixwith<T, U>(superclass: T, ...mixins: Mixin<Partial<U>>[]): Mix<T, U>
 
 export function mixwith(superclass: typeof Object, ...mixins: Mixin<any>[]) {

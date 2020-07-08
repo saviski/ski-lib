@@ -10,21 +10,10 @@ export default class SkiAssociation extends SkiAttributeEvaluation {
     if (target.includes('.') || typeof data == 'object' || typeof data == 'function') {
       let chain = target.split('.').map(this.camelCase)
       let property = chain.pop()!
-      chain.reduce((data, name) => data[name], element)[property] = data
+      let object = chain.reduce((data, name) => data[name] ?? data[name], element)
+      object[property] = data
     } else {
       element.setAttribute(target, data)
     }
   }
 }
-
-for (let unit of ['em', 'ex', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ch', 'rem', 'vh', 'vw', 'vmin', 'vmax'])
-  Object.defineProperty(Number.prototype, unit, {
-    get() {
-      return this + unit
-    },
-  })
-Object.defineProperty(Number.prototype, 'percent', {
-  get() {
-    return this + '%'
-  },
-})
