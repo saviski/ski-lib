@@ -1,8 +1,8 @@
 export async function* reduce<T, U>(
   source: AsyncGenerator<T>,
-  callbackfn: (previousValue: U, currentValue: T, currentIndex: number) => U,
-  index = 0
+  callbackfn: (previousValue: U, currentValue: T) => U,
+  initial?: T
 ): AsyncGenerator<U> {
-  let previous = (await source.next()).value
-  for await (const value of source) yield (previous = callbackfn(previous, value, index++))
+  let previous = initial ?? (await source.next()).value
+  for await (const value of source) yield (previous = callbackfn(previous, value))
 }

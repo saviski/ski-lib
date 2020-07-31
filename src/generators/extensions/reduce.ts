@@ -4,10 +4,10 @@ import { reduce } from '../operators/reduce'
 
 declare module '../extended-async-generator' {
   interface ExtendedAsyncGenerator<T> {
-    reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number) => U, index?: number): ExtendedAsyncGenerator<U>
+    reduce<U>(callbackfn: (previousValue: U, currentValue: T) => U, initial?: T): ExtendedAsyncGenerator<U>
   }
 }
 
-ExtendedAsyncGenerator.prototype.reduce = function (next, index) {
-  return from(reduce(this, next, index))
+ExtendedAsyncGenerator.prototype.reduce = function (next, initial) {
+  return from(reduce(this, next, initial))
 }

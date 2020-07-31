@@ -1,56 +1,73 @@
 import { importScript } from './import-module-content'
-import SkiComponent from './ski-component'
-import { mix } from '../extras/mix'
-import attributes from '../extras/attributes'
+import { mix } from '../mix/in'
+import attributes from '../mix/with/attributes'
+import template from '../mix/with/template.js'
+import baseURI from '../mix/with/base-uri.js'
 
-class SkiTemplateComponent extends HTMLElement {
+class SkiComponentDeclaration extends HTMLElement {
   private content: DocumentFragment
 
-  component?: typeof SkiComponent
+  componentClass?: typeof HTMLElement
 
   constructor() {
     super()
-    if (this.firstElementChild instanceof HTMLTemplateElement) this.content = this.firstElementChild.content
+    if (this.firstElementChild instanceof HTMLTemplateElement)
+      this.content = this.firstElementChild.content
     else {
       this.content = document.createDocumentFragment()
       this.content.append(...this.childNodes)
     }
-    const name = this.getAttribute('name')!
-    const extendsComponent = this.getAttribute('extends')
-    this.createComponent(name, extendsComponent!)
+    this.createComponent()
   }
 
   get templateAttributes() {
     return Object.fromEntries(
       this.getAttribute('attributes')
-        ?.split(/,?\s+/)
+        ?.trim()
+        .split(/,?\s+/)
         .map(name => [name, undefined]) ?? []
     )
   }
 
-  async createComponent(name?: string, extendsComponent?: string) {
-    const baseURI = this.parentElement?.baseURI ?? document.baseURI
-
-    const modules = await Promise.all(
-      Array.from(this.content.querySelectorAll<HTMLScriptElement>('script')).map(module => (module.remove(), importScript(module, baseURI)))
-    ).then(list => Object.assign({}, ...list))
-
-    const componentClass: typeof SkiComponent = modules.default || (await this.createClass(extendsComponent))
-    componentClass.content = this.content
-    componentClass.baseURI = baseURI
-    customElements.define(name || componentClass.is, componentClass)
-    this.component = componentClass
+  get name() {
+    return this.getAttribute('name') || undefined
   }
 
-  async createClass(extendsComponent?: string) {
-    const baseComponent: typeof SkiComponent = extendsComponent
-      ? (await customElements.whenDefined(extendsComponent), await customElements.get(extendsComponent))
-      : SkiComponent
+  get extends() {
+    return this.getAttribute('extends') || undefined
+  }
 
-    return class extends mix(baseComponent).with(attributes(this.templateAttributes)) {}
+  async createComponent() {
+    const componentBaseURI = this.getRootNode().baseURI
+
+    const modules = await Promise.all(
+      Array.from(this.content.querySelectorAll<HTMLScriptElement>('script')).map(
+        module => (module.remove(), importScript(module, componentBaseURI))
+      )
+    ).then(list => Object.assign({}, ...list))
+
+    const componentClass: typeof HTMLElement =
+      modules.default || (await this.createClass(this.extends))
+
+    const componentWithTemplate = mix(componentClass).with(
+      template(this.content),
+      baseURI(componentBaseURI)
+    )
+
+    customElements.define(this.name || componentClass['is'], componentWithTemplate)
+    this.componentClass = componentClass
+  }
+
+  private async createClass(extendsComponent?: string) {
+    const baseComponent: typeof HTMLElement = extendsComponent
+      ? (await customElements.whenDefined(extendsComponent),
+        await customElements.get(extendsComponent))
+      : HTMLElement
+
+    return mix(baseComponent).with(attributes(this.templateAttributes))
   }
 }
 
-export function initSkiComponent(name = 'ski-component') {
-  customElements.get(name) || customElements.define(name, SkiTemplateComponent)
+export function registerSkiComponent(name = 'ski-component') {
+  customElements.get(name) || customElements.define(name, SkiComponentDeclaration)
 }

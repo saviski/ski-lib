@@ -1,7 +1,7 @@
-import SkiDependencyEval from '../core/ski-dependency-eval'
 import SkiNodeObserver from '../core/ski-node-observer'
 import { Rule, xpathContent, matcher } from '../core/ski-rule'
 import '../core/ski-data'
+import SkiObservableExpresion from '../eval/ski-observable-expression.js'
 
 const expression = Symbol('expression')
 
@@ -18,9 +18,13 @@ export default class SkiInlineExpression extends SkiNodeObserver {
   }
 
   protected updateTree(node: Node) {
-    let nodes = this.xPathExpression.evaluate(node, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE)
+    let nodes = this.xPathExpression.evaluate(
+      node,
+      XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE
+    )
 
-    for (let i = 0, node: Text; (node = <Text>nodes.snapshotItem(i)); i++) this.splitText(node)
+    for (let i = 0, node: Text; (node = <Text>nodes.snapshotItem(i)); i++)
+      this.splitText(node)
   }
 
   protected detachTree(node: Node) {
@@ -28,11 +32,13 @@ export default class SkiInlineExpression extends SkiNodeObserver {
       node,
       NodeFilter.SHOW_TEXT,
       {
-        acceptNode: (node: Node) => (expression in node ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT),
+        acceptNode: (node: Node) =>
+          expression in node ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT,
       },
       false
     )
-    for (let textNode: Text; (textNode = <Text>textNodes.nextNode()); ) this.detach(textNode)
+    for (let textNode: Text; (textNode = <Text>textNodes.nextNode()); )
+      this.detach(textNode)
   }
 
   private async splitText(text: Text) {
@@ -47,8 +53,11 @@ export default class SkiInlineExpression extends SkiNodeObserver {
   }
 
   protected async updateText(text: Text) {
-    const content = text.textContent!.substring(this.prefix.length, text.textContent!.length - this.suffix.length)
-    let result = new SkiDependencyEval(content, text, text.skidata).run()
+    const content = text.textContent!.substring(
+      this.prefix.length,
+      text.textContent!.length - this.suffix.length
+    )
+    let result = new SkiObservableExpresion(content, text).run(text.skidata)
     text[expression] = result
     text.textContent = ''
     for await (let value of result) text.textContent = value

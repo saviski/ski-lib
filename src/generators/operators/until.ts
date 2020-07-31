@@ -1,12 +1,13 @@
 import { clone } from './clone'
-import { isAsyncGenerator } from './is'
+import { hasAsyncGenerator } from './has'
+import { HasAsyngIterator } from '../extended-async-generator.js'
 
 export async function* until<T>(
-  source: AsyncGenerator<T>,
+  source: HasAsyngIterator<T>,
   ...events: Array<AsyncGenerator<any> | Promise<any>>
 ): AsyncGenerator<T> {
   const generator = clone(source)
-  const stop = events.map(next => (isAsyncGenerator(next) ? clone(next).next() : next))
+  const stop = events.map(next => (hasAsyncGenerator(next) ? clone(next).next() : next))
   Promise.race(stop).then(() => generator.return(undefined))
   yield* generator
 }

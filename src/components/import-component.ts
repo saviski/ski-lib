@@ -1,41 +1,39 @@
-import './request-document'
+import '../extras/request-document'
 
 const imports = new Set<string>()
 
-var importBasePath = new URL(location.origin)
+export function registerComponentImporter(name: string) {
+  customElements.define(name, ImportComponent)
+}
 
-export const importComponent = async (path: string, rel: string, parent = document.head): Promise<any> => {
-  let base = document.createElement('base')
-  try {
-    importBasePath = new URL(path, location.origin)
-    base.href = importBasePath.href
-    document.head.prepend(base)
-    if (!imports.has(importBasePath.href)) {
-      const content = await (await fetch(importBasePath.href)).document()
-      importAllComponents(content, rel, importBasePath)
-      preloadStylesheets(content, importBasePath)
-      parent.append(content)
-      imports.add(importBasePath.href)
-      Object.defineProperty(parent, 'baseURI', { value: base.href })
-    }
-  } catch (e) {
-    throw new Error(`${e}\n\tat importComponent('${path}')`)
-  } finally {
-    document.head.removeChild(base)
+export class ImportComponent extends HTMLElement {
+  async connectedCallback() {
+    if (!this.getAttribute('src')) throw Error(this.tagName + ' src tag is required')
+    let root = this.attachShadow({ mode: 'open' })
+    this.import(root)
   }
-}
 
-export function importAllComponents(element: ParentNode, rel: string, basepath?: URL) {
-  for (let link of element.querySelectorAll<HTMLLinkElement>(`link[rel=${rel}]`))
-    importComponent(new URL(link.href, basepath).href, link.getAttribute('as')!, link)
-}
+  get baseURI() {
+    let src = this.getAttribute('src')
+    return new URL(src!, this.getRootNode().baseURI).href
+  }
 
-function preloadStylesheets(element: ParentNode, basepath: URL) {
-  for (const link of element.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]')) {
-    const preload = <HTMLLinkElement>link.cloneNode()
-    preload.rel = 'preload'
-    preload.as = 'style'
-    preload.href = new URL(link.href, basepath).href
-    document.head.append(preload)
+  async import(container: ShadowRoot) {
+    let base = document.createElement('base')
+    base.href = this.baseURI
+
+    if (imports.has(base.href)) return
+
+    try {
+      const response = await fetch(base.href)
+      const content = await response.document()
+      document.head.prepend(base)
+      container.append(content)
+      imports.add(base.href)
+    } catch (e) {
+      throw new Error(`${e}\n\tat <${this.tagName}> src ('${base.href}')`)
+    } finally {
+      base.remove()
+    }
   }
 }

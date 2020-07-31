@@ -8,7 +8,7 @@ export default class SkiRelativeUri extends SkiAttributeObserver {
 
   update(attr: Attr, target: string) {
     const element = attr.ownerElement!
-    element.setAttribute(target, new URL(attr.value, element.skidata.baseURI).href)
+    element.setAttribute(target, new URL(attr.value, element.getRootNode().baseURI).href)
   }
 
   detach() {}

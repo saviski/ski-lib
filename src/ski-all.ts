@@ -21,7 +21,7 @@ import './generators/extensions'
 import './generators/events/dom-events'
 import SkiCSSProperty from './template/ski-css-properties'
 
-export default class SkiAll {
+export default class Ski {
   private all: SkiNodeObserver[]
 
   constructor(root: Node, data?: Readonly<object>) {

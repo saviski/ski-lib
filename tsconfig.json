@@ -3,13 +3,10 @@
     "target": "es2018",
     "module": "esnext",
     "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable",
-      "ESNext.AsyncIterable",
-      "ES2019.Object",
-      "WebWorker",
-      "WebWorker.ImportScripts"
+      "es2020",
+      "dom",
+      "dom.iterable",
+      "esnext.asynciterable"
     ],
     "moduleResolution": "node",
     "declaration": true,
@@ -27,6 +24,7 @@
     "preserveSymlinks": true,
     "declarationDir": ".types",
     "outDir": "js",
+    "baseUrl": "src",
     "plugins": [
       {
         "transform": "ts-transform-import-path-rewrite",
@@ -40,7 +38,7 @@
     ]
   },
   "include": [
-    "src/index.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "./types/**"

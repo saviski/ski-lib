@@ -1,7 +1,7 @@
-import { isAsyncGenerator } from './is'
+import { hasAsyncGenerator } from './has'
+import { HasAsyngIterator } from '../extended-async-generator.js'
 
-export async function* flat<T>(source: AsyncGenerator<T>): AsyncGenerator<T> {
+export async function* flat<T>(source: HasAsyngIterator<T>): AsyncGenerator<T> {
   for await (const value of source)
-    if (isAsyncGenerator(value)) yield* <AsyncGenerator<T>>(<any>value)
-    else yield value
+    hasAsyncGenerator<T>(value) ? yield* value : yield value
 }

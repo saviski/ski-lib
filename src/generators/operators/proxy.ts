@@ -1,7 +1,10 @@
-import { map } from './map'
-import { clone } from './clone'
+import { map } from './map.js'
+import { clone } from './clone.js'
+import { HasAsyngIterator } from '../extended-async-generator.js'
 
-export type AsyncGeneratorGet<T> = { [K in keyof T]: AsyncGeneratorGet<T[K]> & AsyncGenerator<T[K]> }
+export type AsyncGeneratorGet<T> = {
+  [K in keyof T]: AsyncGeneratorGet<T[K]> & AsyncGenerator<T[K]>
+}
 
 interface Getter {
   target: any
@@ -20,7 +23,10 @@ const getter = (options: Getter, { target, callable } = options): any =>
     },
   })
 
-export function proxy<T>(target: AsyncGenerator<T>, wrapper = clone): AsyncGeneratorGet<T> {
+export function proxy<T>(
+  target: HasAsyngIterator<T>,
+  wrapper = clone
+): AsyncGeneratorGet<T> {
   const mapper = (target3, transform) => wrapper(map(target3, transform))
 
   const fallback = (target2, property) =>

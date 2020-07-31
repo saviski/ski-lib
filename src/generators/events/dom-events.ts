@@ -1,8 +1,8 @@
+import { lazyGetter } from './../../extras/lazy-getter'
 import AsyncGeneratorEmitter from './async-generator-emitter'
 import { ExtendedAsyncGenerator } from '../extended-async-generator'
 import '../../core/ski-data'
 import '../extensions/'
-import { lazyProxy } from '../../core/ski-lazy-proxy'
 
 export interface EventGeneratorOptions {
   preventDefault?: boolean
@@ -10,12 +10,19 @@ export interface EventGeneratorOptions {
   matches?: string
 }
 
-type AddEventListener = Pick<HTMLElement, 'addEventListener' | 'removeEventListener' | 'dispatchEvent'>
+type AddEventListener = Pick<
+  HTMLElement,
+  'addEventListener' | 'removeEventListener' | 'dispatchEvent'
+>
 
-export default class EventGenerator<T extends Event = CustomEvent> extends AsyncGeneratorEmitter<
-  T extends CustomEvent<infer U> ? U : T
-> {
-  constructor(private element: AddEventListener, private type: string, private options: EventGeneratorOptions = {}) {
+export default class EventGenerator<
+  T extends Event = CustomEvent
+> extends AsyncGeneratorEmitter<T extends CustomEvent<infer U> ? U : T> {
+  constructor(
+    private element: AddEventListener,
+    private type: string,
+    private options: EventGeneratorOptions = {}
+  ) {
     super()
     element.addEventListener(type, this.handler)
   }
@@ -23,7 +30,10 @@ export default class EventGenerator<T extends Event = CustomEvent> extends Async
   handler = (event: Event) => {
     this.options.preventDefault && event.preventDefault()
     this.options.stopPropagation && event.stopPropagation()
-    if (!this.options.matches || (event.target instanceof Element && event.target.matches(this.options.matches)))
+    if (
+      !this.options.matches ||
+      (event.target instanceof Element && event.target.matches(this.options.matches))
+    )
       super.emit(event instanceof CustomEvent ? (<CustomEvent>event).detail : event)
   }
 
@@ -51,14 +61,18 @@ export default class EventGenerator<T extends Event = CustomEvent> extends Async
   }
 
   get skidata(): AsyncGenerator<any> {
-    return <any>this.target.filter<Node>(element => element instanceof Node).map(element => element.skidata).get
+    return <any>(
+      this.target
+        .filter<Node>(element => element instanceof Node)
+        .map(element => element.skidata).get
+    )
   }
 
   emit(value: T extends CustomEvent<infer U> ? U : T) {
     this.element.dispatchEvent(
       value instanceof Event
         ? new (<typeof Event>value.constructor)(this.type, value)
-        : new CustomEvent<any>(this.type, { detail: value })
+        : new CustomEvent<any>(this.type, { detail: value, bubbles: true })
     )
   }
 
@@ -85,22 +99,22 @@ declare global {
   var events: EventMap
 }
 
-const events$ = Symbol('events')
-
-export function events(context: AddEventListener | Document | Window): EventMap {
-  return (
-    context[events$] ??
-    (context[events$] = lazyProxy(property => {
-      if (property != property.toString().toLowerCase())
-        console.warn(`Consider using only lowercase letters for event ${property.toString()} name`)
-      return new EventGenerator(context, property)
-    }))
-  )
+const valid = property => {
+  if (property != property.toString().toLowerCase())
+    throw Error(`Use only lowercase letters for event: ${property.toString()} name`)
+  return true
 }
+
+const events = (context: AddEventListener | Document | Window): EventMap =>
+  lazyGetter(
+    property => valid(property) && new EventGenerator(context, property),
+    {}
+  ) as EventMap
 
 Object.defineProperty(Node.prototype, 'events', {
   get() {
-    return events(this)
+    Object.defineProperty(this, 'events', { value: events(this) })
+    return this.events
   },
 })
 

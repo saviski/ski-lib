@@ -29,7 +29,6 @@ export default class SkiRepeat extends SkiPropertyObserver<RepeatContent> {
         return node
       })
     )
-    delete element.skidata.index
   }
 
   getNode(content: RepeatContent, item: any): Node {

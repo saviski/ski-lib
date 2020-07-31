@@ -6,7 +6,11 @@
   "main": "ski-lib.min.js",
   "types": ".types/index.d.ts",
   "scripts": {
-    "build": "rollup -c && ttsc"
+    "build": "run-s clean build:*",
+    "watch": "run-p \"build:* -- --watch\"",
+    "clean": "rimraf js .types",
+    "build:bundle": "rollup -c",
+    "build:typescript": "ttsc"
   },
   "keywords": [
     "html",
@@ -26,13 +30,15 @@
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
     "eslint": "^7.3.1",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
     "rollup": "^2.16.1",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-typescript2": "^0.27.1",
     "ts-transform-import-path-rewrite": "^0.2.1",
     "tslib": "^2.0.0",
     "ttypescript": "^1.5.10",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.7"
   },
   "files": [
     ".types",
@@ -44,7 +50,7 @@
     "tokenlist": "^0.1.0"
   },
   "prettier": {
-    "printWidth": 132,
+    "printWidth": 90,
     "semi": false,
     "tabWidth": 2,
     "proseWrap": "never",

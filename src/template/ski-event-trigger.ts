@@ -1,10 +1,10 @@
 import { Rule } from '../core/ski-rule'
-import SkiDependencyEval from '../core/ski-dependency-eval'
 import SkiAttributeObserver from '../core/ski-attribute-observer'
 import '../core/ski-data'
 import EventGenerator from '../generators/events/dom-events'
 import '../generators/extensions/trigger'
 import '../generators/extensions/for-each'
+import SkiObservableExpresion from '../eval/ski-observable-expression.js'
 
 export default class SkiEventTrigger extends SkiAttributeObserver {
   static readonly evaluationSnapshot = false
@@ -17,32 +17,17 @@ export default class SkiEventTrigger extends SkiAttributeObserver {
     if (!attr.processed) {
       let element = attr.ownerElement!
       let [listen, emit] = this.camelCase(target).split(this.separator)
-      let evaluator = new SkiDependencyEval(attr.value, element, attr.skidata)
+      let evaluator = new SkiObservableExpresion(attr.value, element)
       const emitter: EventGenerator<any> = element.events[emit]
-      element.events[listen].forEach((event: Event) => {
+      element.events[listen].forEach(async (event: Event) => {
         let copy: any = {}
         // for (const name in event) copy[name] = event[name];
         Object.assign(attr.skidata, { event }, copy)
-        evaluator
-          .run()
-          .next()
-          .then(({ value }) => emitter(value))
+        let { value } = await evaluator.run(attr.skidata).next()
+        emitter(value)
       })
       attr.processed = true
       // attr.ownerElement!.removeAttributeNode(attr)
-    }
-  }
-
-  async update_(attr: Attr, target: string) {
-    if (!attr.processed) {
-      const [listen, emit] = this.camelCase(target).split(this.separator)
-      const element = attr.ownerElement!
-      const listener = element.events[listen]
-      const emitter = element.events[emit]
-      attr.skidata.event = listener
-      const evaluator = new SkiDependencyEval(attr.value, element, attr.skidata)
-      listener.trigger(() => evaluator.run()).forEach(emitter)
-      attr.processed = true
     }
   }
 

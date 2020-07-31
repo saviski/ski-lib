@@ -1,7 +1,7 @@
-import SkiDependencyEval from '../core/ski-dependency-eval'
 import SkiNodeObserver from '../core/ski-node-observer'
 import { Rule, xpathContent, matcher } from '../core/ski-rule'
 import '../core/ski-data'
+import SkiObservableExpresion from '../eval/ski-observable-expression.js'
 
 const templateEval = Symbol('templateEval')
 
@@ -18,9 +18,13 @@ export default class SkiTemplateString extends SkiNodeObserver {
   }
 
   protected updateTree(node: Node) {
-    let nodes = this.xPathExpression.evaluate(node, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE)
+    let nodes = this.xPathExpression.evaluate(
+      node,
+      XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE
+    )
 
-    for (let i = 0, node: Text; (node = <Text>nodes.snapshotItem(i)); i++) this.update(node, node.textContent!)
+    for (let i = 0, node: Text; (node = <Text>nodes.snapshotItem(i)); i++)
+      this.update(node, node.textContent!)
   }
 
   protected detachTree(node: Node) {
@@ -29,15 +33,17 @@ export default class SkiTemplateString extends SkiNodeObserver {
       node,
       NodeFilter.SHOW_TEXT,
       {
-        acceptNode: (node: Node) => (templateEval in node ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT),
+        acceptNode: (node: Node) =>
+          templateEval in node ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT,
       },
       false
     )
-    for (let textNode: Text; (textNode = <Text>textNodes.nextNode()); ) this.detach(textNode)
+    for (let textNode: Text; (textNode = <Text>textNodes.nextNode()); )
+      this.detach(textNode)
   }
 
   protected async update(node: Text, content: string) {
-    let result = new SkiDependencyEval(content, node, node.skidata).run()
+    let result = new SkiObservableExpresion(content, node).run(node.skidata)
     node[templateEval] = result
     node.textContent = ''
     for await (let value of result) node.textContent = value

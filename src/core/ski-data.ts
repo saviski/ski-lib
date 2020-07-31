@@ -1,7 +1,9 @@
 const dataStore = new WeakMap<Node, object>()
 
-!('skidata' in Node.prototype) &&
-  Object.defineProperty(Node.prototype, 'skidata', {
+export const SKIDATA_PROPERTY = 'skidata'
+
+SKIDATA_PROPERTY in Node.prototype ||
+  Object.defineProperty(Node.prototype, SKIDATA_PROPERTY, {
     get(this: Node): object {
       let data = dataStore.get(this)
       if (!data) dataStore.set(this, (data = {}))
@@ -14,7 +16,7 @@ const dataStore = new WeakMap<Node, object>()
   })
 
 export interface TypedSkiData<T> {
-  readonly skidata: T
+  readonly [SKIDATA_PROPERTY]: T
 }
 
 declare global {
